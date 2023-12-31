@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Auth;
 use App\Models\Pasien;
+use App\Models\Dokter;
 
 class AuthController extends Controller
 {
@@ -66,6 +67,9 @@ class AuthController extends Controller
         // Cari akun berdasarkan email
         $akun = Auth::where('email', $request->input('email'))->first();
 
+        $dokter = Dokter::where('id_akun', $akun->id)->first();
+        $pasien = Pasien::where('id_akun', $akun->id)->first();
+
         // Jika akun tidak ditemukan
         if (!$akun) {
             return redirect()->back()->with('error', 'Email tidak ditemukan!');
@@ -83,11 +87,11 @@ class AuthController extends Controller
         $request->session()->put('role', $akun->role);
 
         if ($akun->role == 'pasien') {
-            return redirect()->route('pasien.dashboard');
+            return redirect()->route('pasien.dashboard.form')->with('pasien', $pasien);
         } else if ($akun->role == 'admin') {
             return redirect()->route('admin.dashboard')->with('akun', $akun);
         } else if ($akun->role == 'dokter') {
-            return redirect()->route('dokter.dashboard');
+            return redirect()->route('dokter.dashboard')->with('dokter', $dokter);
         }
     }
 

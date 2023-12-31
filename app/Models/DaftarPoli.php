@@ -6,30 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Pasien extends Model
+class DaftarPoli extends Model
 {
     use HasFactory;
     protected $primaryKey = 'id';
     protected $keyType = 'int';
-    protected $table = 'pasien';
+    protected $table = 'daftar_poli';
     public $incrementing = true;
     public $timestamps = false;
+
     protected $fillable = [
-        'nama',
-        'id_akun',
-        'alamat',
-        'no_ktp',
-        'no_hp',
-        'no_rm'
+        'id_pasien',
+        'id_jadwal',
+        'keluhan',
+        'no_antrian',
     ];
 
-    public function auth(): BelongsTo
+    public function pasien(): BelongsTo
     {
-        return $this->belongsTo(Pasien::class, 'id_akun', 'id');
+        return $this->belongsTo(Pasien::class, 'id_pasien', 'id');
     }
 
-    public function daftarPoli()
+    public function jadwal(): BelongsTo
     {
-        return $this->hasMany(DaftarPoli::class, 'id_pasien', 'id');
+        return $this->belongsTo(Jadwal::class, 'id_jadwal', 'id');
     }
 }

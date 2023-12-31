@@ -65,7 +65,7 @@
                             <div class="form-floating mb-1">
                                 <textarea class="form-control" placeholder="alamat" id="alamat" name="alamat" style="height: 100px" required></textarea>
                                 <label for="alamat">Alamat</label>
-                                <div class="invalid-feedback">Masukkan alamat</div>
+                                <div class="invalid-feedback">Masukkan alamat anda</div>
                             </div>
                         </div>
 

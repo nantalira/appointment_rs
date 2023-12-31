@@ -9,6 +9,8 @@
                 {{ route('admin.dashboard') }}
             @elseif (session()->has('role') && session('role') == 'pasien')
                 {{ route('pasien.dashboard') }}
+            @elseif (session()->has('role') && session('role') == 'dokter')
+                {{ route('dokter.dashboard') }}
             @endif
             " class="logo d-flex align-items-center">
                 <img src="{{ asset('assets/img/logo.png') }}" alt="" />
@@ -27,6 +29,8 @@
                                 Admin
                             @elseif (session()->has('role') && session('role') == 'pasien')
                                 {{ucwords(strtolower($pasien['nama']))}}
+                            @elseif (session()->has('role') && session('role') == 'dokter')
+                                {{ucwords(strtolower($dokter['nama']))}}
                             @endif
                         </span>
                         <span class="d-block d-md-none">
@@ -34,6 +38,8 @@
                                 Admin
                             @elseif (session()->has('role') && session('role') == 'pasien')
                                 {{ucwords(strtolower($pasien['nama']))}}
+                            @elseif (session()->has('role') && session('role') == 'dokter')
+                                {{ucwords(strtolower($dokter['nama']))}}
                             @endif
                         </span>
                     </a>
@@ -46,6 +52,8 @@
                                 Admin
                                 @elseif (session()->has('role') && session('role') == 'pasien')
                                     {{ucwords(strtolower($pasien['nama']))}}
+                                @elseif (session()->has('role') && session('role') == 'dokter')
+                                    {{ucwords(strtolower($dokter['nama']))}}
                                 @endif
                             </h6>
                             <span>{{ ucwords(strtolower($session['role'])) }}</span>
@@ -55,10 +63,12 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-person"></i>
-                                <span>Profil Saya</span>
-                            </a>
+                            @if (session()->has('role') && session('role') == 'dokter')
+                                <a class="dropdown-item d-flex align-items-center" href="{{route('admin.edit_dokter.form', $dokter->id)}}">
+                                    <i class="bi bi-person"></i>
+                                    <span>Profil Saya</span>
+                                </a>
+                            @endif
                         </li>
                         <li>
                             <hr class="dropdown-divider" />

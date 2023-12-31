@@ -2,7 +2,7 @@
 @include('layouts.sidebar')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Data Dokter</h1>
+        <h1>Data Obat</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -18,39 +18,29 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Daftar Para Dokter</h5>
+                        <h5 class="card-title">Daftar Obat Yang Tersedia</h5>
 
                         <!-- Table with stripped rows -->
                         <table class="table datatable">
                             <thead>
                                 <tr>
                                     <th scope="col">No</th>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Nomor Hp</th>
-                                    <th scope="col">Alamat</th>
-                                    <th scope="col">Nama Poli</th>
+                                    <th scope="col">Nama Obat</th>
+                                    <th scope="col">Kemasan</th>
+                                    <th scope="col">Harga</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($dokter as $dokter)
+                                @foreach ($obat as $obat)
                                     <tr>
                                         <th scope="row">{{ $loop->iteration }}</th>
-                                        <td>{{ $dokter->nama }}</td>
-                                        <td>{{ $dokter->email }}</td>
-                                        <td>{{ $dokter->no_hp }}</td>
-                                        <td>{{ $dokter->alamat }}</td>
+                                        <td>{{ $obat->nama_obat }}</td>
+                                        <td>{{ $obat->kemasan }}</td>
+                                        <td>{{ $obat->harga }}</td>
                                         <td>
-                                            @if ($dokter->id_poli == null)
-                                                <p>Tidak ada poli</p>
-                                            @else
-                                                {{ $dokter->poli->nama_poli }}
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('admin.edit_dokter.form', $dokter->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                            <form method="POST" action="{{ route('admin.delete_dokter', ['id' => $dokter->id]) }}" style="display: inline;">
+                                            <a href="{{ route('admin.edit_obat.form', $obat->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                            <form method="POST" action="{{ route('admin.delete_obat', ['id' => $obat->id]) }}" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
