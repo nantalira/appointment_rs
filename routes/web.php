@@ -18,7 +18,7 @@ use App\Http\Controllers\DokterController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register.form');
@@ -34,6 +34,10 @@ Route::middleware('role:dokter')->get('/jadwal-saya/{id}', [DokterController::cl
 Route::middleware('role:dokter')->put('/jadwal-saya/{id}', [DokterController::class, 'editJadwal'])->name('dokter.jadwal_saya');
 Route::middleware('role:dokter')->get('/jadwal-saya', [DokterController::class, 'showJadwalForm'])->name('dokter.create_jadwal.form');
 Route::middleware('role:dokter')->post('/jadwal-saya', [DokterController::class, 'createJadwal'])->name('dokter.create_jadwal');
+Route::middleware('role:dokter')->get('/daftar-periksa', [DokterController::class, 'manageAntrian'])->name('dokter.daftar_periksa');
+Route::middleware('role:dokter')->get('/pemeriksaan/{id}', [DokterController::class, 'periksaPasienForm'])->name('dokter.periksa.form');
+Route::middleware('role:dokter')->post('/create-periksa', [DokterController::class, 'createPeriksa'])->name('dokter.periksa');
+Route::middleware('role:dokter')->get('/riwayat-periksa', [DokterController::class, 'riwayatPeriksa'])->name('dokter.riwayat_periksa');
 
 Route::middleware('role:admin')->get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::middleware('role:admin')->get('/create-dokter', [AdminController::class, 'showDokterForm'])->name('admin.create_dokter.form');

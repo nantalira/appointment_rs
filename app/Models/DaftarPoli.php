@@ -20,6 +20,7 @@ class DaftarPoli extends Model
         'id_jadwal',
         'keluhan',
         'no_antrian',
+        'status'
     ];
 
     public function pasien(): BelongsTo

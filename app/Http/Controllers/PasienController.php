@@ -33,8 +33,10 @@ class PasienController extends Controller
                 ->join('poli', 'dokter.id_poli', '=', 'poli.id')
                 ->join('daftar_poli', 'jadwal_periksa.id', '=', 'daftar_poli.id_jadwal')
                 ->where('jadwal_periksa.id', $value->id_jadwal)
+                ->where('daftar_poli.status', 'daftar')
                 ->count();
             $antrianSaya = DaftarPoli::join('jadwal_periksa', 'daftar_poli.id_jadwal', '=', 'jadwal_periksa.id')
+                ->where('daftar_poli.status', 'daftar')
                 ->where('daftar_poli.id_pasien', $pasien->id)
                 ->where('jadwal_periksa.id', $value->id_jadwal)
                 ->select('daftar_poli.no_antrian')
@@ -69,17 +71,21 @@ class PasienController extends Controller
             ->join('poli', 'dokter.id_poli', '=', 'poli.id')
             ->where('daftar_poli.id_pasien', $request->input('id'))
             ->where('jadwal_periksa.id', $request->input('id_jadwal'))
-            ->count();
-        if ($cekAntrianPerPoli > 0) {
+            ->orderBy('daftar_poli.id', 'desc')
+            ->select('daftar_poli.status')
+            ->value('status');
+        if ($cekAntrianPerPoli == 'daftar') {
             return redirect()->route('pasien.dashboard.form')->with('error', 'Anda Sudah Terdaftar Pada Antrian Poli Ini');
+        } else {
+            $no_antrian = $AntrianPerPoli + 1;
+            DaftarPoli::create([
+                'id_pasien' => $request->input('id'),
+                'id_jadwal' => $request->input('id_jadwal'),
+                'keluhan' => $request->input('keluhan'),
+                'no_antrian' => $no_antrian,
+                'status' => 'daftar'
+            ]);
+            return redirect()->route('pasien.dashboard.form')->with('success', 'Pendaftaran Berhasil');
         }
-        $no_antrian = $AntrianPerPoli + 1;
-        DaftarPoli::create([
-            'id_pasien' => $request->input('id'),
-            'id_jadwal' => $request->input('id_jadwal'),
-            'keluhan' => $request->input('keluhan'),
-            'no_antrian' => $no_antrian,
-        ]);
-        return redirect()->route('pasien.dashboard.form')->with('success', 'Pendaftaran Berhasil');
     }
 }

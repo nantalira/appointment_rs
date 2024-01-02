@@ -14,7 +14,12 @@ class AdminController extends Controller
     public function index()
     {
         $session = session()->all();
-        return view('admin.dashboard', compact('session'));
+        $jumlahPasien = Pasien::count();
+        $jumlahDokter = Dokter::count();
+        $jumlahObat = Obat::count();
+        $dokterTiapPoli = Dokter::join('poli', 'dokter.id_poli', '=', 'poli.id')
+            ->select('nama_poli as name', Dokter::raw('count(*) as value'))->groupBy('nama_poli')->get();
+        return view('admin.dashboard', compact('session', 'jumlahPasien', 'jumlahDokter', 'jumlahObat', 'dokterTiapPoli'));
     }
 
     public function showDokterForm()
@@ -79,13 +84,15 @@ class AdminController extends Controller
     {
         $session = session()->all();
         // find dokter where id akun = $id with join akun
+        $poli = Poli::all();
         if ($session['role'] == 'dokter') {
             $dokter = Dokter::join('akun', 'dokter.id_akun', '=', 'akun.id')->where('akun.id', $session['id'])->first();
+            $id_dokter = Dokter::where('id_akun', $session['id'])->select('id')->first();
+            return view('admin.edit_dokter', compact('session', 'dokter', 'poli', 'id_dokter'));
         } else if ($session['role'] == 'admin') {
             $dokter = Dokter::join('akun', 'dokter.id_akun', '=', 'akun.id')->where('akun.id', $id)->first();
+            return view('admin.edit_dokter', compact('session', 'dokter', 'poli'));
         }
-        $poli = Poli::all();
-        return view('admin.edit_dokter', compact('session', 'dokter', 'poli'));
     }
 
     public function editDokter(Request $request, $id)

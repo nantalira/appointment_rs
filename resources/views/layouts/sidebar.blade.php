@@ -1,15 +1,15 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="index.html">
-                <i class="bi bi-grid"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
         <!-- End Dashboard Nav -->
 
         @if ( session()->has('role') && session('role') == 'admin')
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('admin.dashboard')}}">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#"> <i class="bi bi-menu-button-wide"></i><span>Dokter</span><i class="bi bi-chevron-down ms-auto"></i> </a>
                 <ul id="components-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
@@ -65,10 +65,16 @@
         <!-- End Sidebar-->
         @elseif (session()->has('role') && session('role') == 'dokter')
             <li class="nav-item">
+                <a class="nav-link" href="{{route('dokter.dashboard')}}">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#"> <i class="bi bi-menu-button-wide"></i><span>Jadwal Periksa</span><i class="bi bi-chevron-down ms-auto"></i> </a>
                 <ul id="components-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="{{ route('dokter.jadwal_saya', ['id' => $dokter->id]) }}"> <i class="bi bi-circle"></i><span>Jadwal Saya</span> </a>
+                        <a href="{{ route('dokter.jadwal_saya', ['id' => $id_dokter->id]) }}"> <i class="bi bi-circle"></i><span>Jadwal Saya</span> </a>
                     </li>
                     <li>
                         <a href="{{route('dokter.create_jadwal.form')}}"> <i class="bi bi-circle"></i><span>Tambah Jadwal</span> </a>
@@ -81,10 +87,10 @@
                 <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#"> <i class="bi bi-journal-text"></i><span>Periksa Pasien</span><i class="bi bi-chevron-down ms-auto"></i> </a>
                 <ul id="forms-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="forms-elements.html"> <i class="bi bi-circle"></i><span>Data Pemeriksaan</span> </a>
+                        <a href="{{route('dokter.daftar_periksa')}}"> <i class="bi bi-circle"></i><span>Data Pemeriksaan</span> </a>
                     </li>
                     <li>
-                        <a href="forms-layouts.html"> <i class="bi bi-circle"></i><span>Riwayat Pemeriksaan</span> </a>
+                        <a href="{{route('dokter.riwayat_periksa')}}"> <i class="bi bi-circle"></i><span>Riwayat Pemeriksaan</span> </a>
                     </li>
                 </ul>
             </li>

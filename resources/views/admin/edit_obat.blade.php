@@ -5,9 +5,9 @@
         <h1>Edit Data Obat</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Forms</li>
-                <li class="breadcrumb-item active">Elements</li>
+                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Home</a></li>
+                <li class="breadcrumb-item">Admin</li>
+                <li class="breadcrumb-item active">Edit Obat</li>
             </ol>
         </nav>
     </div>

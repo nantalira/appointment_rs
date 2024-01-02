@@ -5,9 +5,9 @@
         <h1>Edit Data Dokter</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Forms</li>
-                <li class="breadcrumb-item active">Elements</li>
+                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Home</a></li>
+                <li class="breadcrumb-item">Admin</li>
+                <li class="breadcrumb-item active">Edit Dokter</li>
             </ol>
         </nav>
     </div>
@@ -38,7 +38,7 @@
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control" id="nama" name="nama" placeholder="nama" value="{{$dokter->nama}}" required/>
                                         <label for="nama">Nama Lengkap</label>
-                                        <div class="invalid-feedback">Masukkan nama dokter</div>
+                                        <div class="invalid-feedback">Masukkan nama dokter </div>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input type="email" class="form-control" id="email" placeholder="email" name="email"value="{{$dokter->email}}" required/>
