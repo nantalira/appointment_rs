@@ -18,17 +18,8 @@ class PasienController extends Controller
             ->join('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
             ->join('poli', 'dokter.id_poli', '=', 'poli.id')
             ->get();
-
         $jadwalUnik = [];
         foreach ($jadwal as $key => $value) {
-            // cek id jadwal yang unik
-            // $cekIdJadwal = DaftarPoli::join('jadwal_periksa', 'daftar_poli.id_jadwal', '=', 'jadwal_periksa.id')
-            //     ->join('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
-            //     ->join('poli', 'dokter.id_poli', '=', 'poli.id')
-            //     ->where('daftar_poli.id_pasien', $pasien->id)
-            //     ->where('jadwal_periksa.id', $value->id_jadwal)
-            //     ->select('daftar_poli.id_jadwal')
-            //     ->first();
             $cekAntrianPerPoli = Jadwal::join('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
                 ->join('poli', 'dokter.id_poli', '=', 'poli.id')
                 ->join('daftar_poli', 'jadwal_periksa.id', '=', 'daftar_poli.id_jadwal')
@@ -46,6 +37,12 @@ class PasienController extends Controller
                 ->where('jadwal_periksa.id', $value->id_jadwal)
                 ->select('poli.nama_poli', 'dokter.*')
                 ->first();
+
+            $cekAntrianPerPoli = $cekAntrianPerPoli - 1;
+            if ($cekAntrianPerPoli < 0) {
+                $cekAntrianPerPoli = 0;
+            }
+
             $jadwalUnik[] = [
                 'antriSebelum' => $cekAntrianPerPoli,
                 'antrianSaya' => $antrianSaya,
@@ -54,7 +51,6 @@ class PasienController extends Controller
             ];
         }
 
-        // dd($jadwalUnik);
 
         return view('pasien.dashboard')->with(compact('session', 'pasien', 'jadwal', 'jadwalUnik'));
     }
