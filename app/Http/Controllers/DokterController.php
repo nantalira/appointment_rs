@@ -25,6 +25,7 @@ class DokterController extends Controller
         $jadwalSaya = Jadwal::join('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
             ->join('poli', 'dokter.id_poli', '=', 'poli.id')
             ->where('dokter.id', $id_dokter->id)
+            ->where('jadwal_periksa.status', 'y')
             ->first();
         $jumlahAntrian = DaftarPoli::join('jadwal_periksa', 'daftar_poli.id_jadwal', '=', 'jadwal_periksa.id')
             ->where('jadwal_periksa.id_dokter', $id_dokter->id)
@@ -61,10 +62,10 @@ class DokterController extends Controller
         $dokter = Dokter::where('id_akun', $session['id'])->first();
         $id_dokter = Dokter::where('id_akun', $session['id'])->select('id')->first();
         // halaman tidak dapat diakses jika dokter sudah memiliki jadwal
-        $cariJadwal = Jadwal::where('id_dokter', $dokter->id)->first();
-        if ($cariJadwal) {
-            return redirect()->route('dokter.jadwal_saya.form', $dokter->id)->with('error', 'Anda sudah memiliki jadwal');
-        }
+        // $cariJadwal = Jadwal::where('id_dokter', $dokter->id)->first();
+        // if ($cariJadwal) {
+        //     return redirect()->route('dokter.jadwal_saya.form', $dokter->id)->with('error', 'Anda sudah memiliki jadwal');
+        // }
         return view('dokter.create_jadwal')->with(compact('session', 'dokter', 'id_dokter'));
     }
 
@@ -113,6 +114,101 @@ class DokterController extends Controller
         ]);
         return redirect()->route('dokter.jadwal_saya.form', $dokter->id)->with('success', 'Jadwal berhasil diubah');
     }
+
+    public function showAllJadwal($id)
+    {
+        $session = session()->all();
+        $dokter = Dokter::where('id', $id)->first();
+        $id_dokter = Dokter::where('id_akun', $session['id'])->select('id')->first();
+        $id_jadwal = Jadwal::where('id_dokter', $id_dokter->id)->select('id')->get();
+        $jadwal = Jadwal::leftjoin('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
+            ->leftjoin('poli', 'dokter.id_poli', '=', 'poli.id')
+            ->where('dokter.id', $id_dokter->id)
+            ->get();
+        $jadwal_dokter = [];
+        foreach ($jadwal as $key => $value) {
+            $id_jadwal = Jadwal::where('id_dokter', $id_dokter->id)->select('id')->get();
+            $id_jadwal = $id_jadwal[$key]->id;
+            $jadwal_dokter[] = [
+                'hari' => $value->hari,
+                'jam_mulai' => $value->jam_mulai,
+                'jam_selesai' => $value->jam_selesai,
+                'nama_poli' => $value->nama_poli,
+                'status' => $value->status,
+                'id_jadwal' => $id_jadwal,
+            ];
+        }
+        return view('dokter.manage_jadwal')->with(compact('session',  'dokter', 'id_dokter', 'jadwal_dokter'));
+    }
+
+    public function showJadwal($id_jadwal)
+    {
+        $session = session()->all();
+        $dokter = Dokter::where('id_akun', $session['id'])->first();
+        $id_dokter = Dokter::where('id_akun', $session['id'])->select('id')->first();
+        $id = Jadwal::where('id', $id_jadwal)->select('id')->first();
+        $jadwal = Jadwal::leftjoin('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
+            ->leftjoin('poli', 'dokter.id_poli', '=', 'poli.id')
+            ->where('dokter.id', $id_dokter->id)
+            ->where('jadwal_periksa.id', $id_jadwal)
+            ->first();
+        $detail_jadwal = [
+            'hari' => $jadwal->hari,
+            'jam_mulai' => $jadwal->jam_mulai,
+            'jam_selesai' => $jadwal->jam_selesai,
+            'nama_poli' => $jadwal->nama_poli,
+            'status' => $jadwal->status,
+            'id_jadwal' => $id->id,
+        ];
+        // dd($detail_jadwal);
+        return view('dokter.ubah_jadwal')->with(compact('session',  'dokter', 'id_dokter', 'detail_jadwal'));
+    }
+
+    public function changeJadwal(Request $request, $id_jadwal)
+    {
+        $session = session()->all();
+        $dokter = Dokter::where('id_akun', $session['id'])->first();
+        $id_dokter = Dokter::where('id_akun', $session['id'])->select('id')->first();
+        $jadwal = Jadwal::where('id', $id_jadwal)->first();
+        // cek apakah terdapat jadwal yang sama pada dokter di poli yang sama
+        $jadwalSama = Jadwal::join('dokter', 'jadwal_periksa.id_dokter', '=', 'dokter.id')
+            ->where('id_poli', $dokter->id_poli)
+            ->where('hari', $request->input('hari'))
+            ->where('jam_mulai', $request->input('jam_mulai'))
+            ->where('jam_selesai', $request->input('jam_selesai'))
+            ->where('jadwal_periksa.id', '!=', $id_jadwal)
+            ->first();
+        if ($jadwalSama) {
+            return redirect()->back()->with('error', 'Jadwal anda bertabrakan dengan jadwal dokter lain');
+        }
+        // dd($request->input('status'));
+        // update jadwal agar hanya ada satu jadwal yang aktif
+        if ($request->input('status') == 'y') {
+            $jadwalAktif = Jadwal::where('id_dokter', $id_dokter->id)->where('status', 'y')->first();
+            if ($jadwalAktif) {
+                $jadwalAktif->update([
+                    'status' => 'n',
+                ]);
+            }
+        }
+
+        $jadwal->update([
+            'hari' => $request->input('hari'),
+            'jam_mulai' => $request->input('jam_mulai'),
+            'jam_selesai' => $request->input('jam_selesai'),
+            'status' => $request->input('status'),
+        ]);
+        return redirect()->route('dokter.manage_jadwal', $id_dokter->id)->with('success', 'Jadwal berhasil diubah');
+    }
+
+    // public function deleteJadwal($id_jadwal)
+    // {
+    //     $session = session()->all();
+    //     $id_dokter = Dokter::where('id_akun', $session['id'])->select('id')->first();
+    //     $jadwal = Jadwal::where('id', $id_jadwal)->first();
+    //     $jadwal->delete();
+    //     return redirect()->route('dokter.manage_jadwal', $id_dokter->id)->with('success', 'Jadwal berhasil dihapus');
+    // }
 
     public function manageAntrian()
     {

@@ -38,6 +38,10 @@ Route::middleware('role:dokter')->get('/daftar-periksa', [DokterController::clas
 Route::middleware('role:dokter')->get('/pemeriksaan/{id}', [DokterController::class, 'periksaPasienForm'])->name('dokter.periksa.form');
 Route::middleware('role:dokter')->post('/create-periksa', [DokterController::class, 'createPeriksa'])->name('dokter.periksa');
 Route::middleware('role:dokter')->get('/riwayat-periksa', [DokterController::class, 'riwayatPeriksa'])->name('dokter.riwayat_periksa');
+Route::middleware('role:dokter')->get('/manage_jadwal/{id}', [DokterController::class, 'showAllJadwal'])->name('dokter.manage_jadwal');
+Route::middleware('role:dokter')->get('/edit-jadwal/{id}', [DokterController::class, 'showJadwal'])->name('dokter.edit_jadwal.form');
+Route::middleware('role:dokter')->put('/edit-jadwal/{id}', [DokterController::class, 'changeJadwal'])->name('dokter.edit_jadwal');
+// Route::middleware('role:dokter')->delete('/delete-jadwal/{id}', [DokterController::class, 'deleteJadwal'])->name('dokter.delete_jadwal');
 
 Route::middleware('role:admin')->get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::middleware('role:admin')->get('/create-dokter', [AdminController::class, 'showDokterForm'])->name('admin.create_dokter.form');
